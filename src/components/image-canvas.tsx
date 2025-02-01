@@ -1,5 +1,6 @@
 import { styled } from "goober"
 import { useEffect, useRef } from "preact/hooks"
+import { BufferedImageData } from "utils/image-data"
 
 const Canvas = styled("canvas")`
   max-width: 100%;
@@ -8,35 +9,34 @@ const Canvas = styled("canvas")`
 `
 
 interface ImageCanvasProps {
-  imageFile: File | null
+  imageData: BufferedImageData
+  transformColor?: (r: number, g: number, b: number) => [number, number, number]
 }
 
-const ImageCanvas = ({ imageFile }: ImageCanvasProps) => {
+const ImageCanvas = ({ imageData, transformColor }: ImageCanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
-    if (!imageFile || !canvasRef.current) return
-
     const canvas = canvasRef.current
-    console.log(canvas)
+    if (!canvas) return
+
     const ctx = canvas.getContext("2d")
     if (!ctx) return
 
-    const img = new Image()
-    img.src = URL.createObjectURL(imageFile)
+    // Set canvas dimensions
+    canvas.width = imageData.width
+    canvas.height = imageData.height
 
-    img.onload = () => {
-      // Set canvas dimensions to match image
-      canvas.width = img.width
-      canvas.height = img.height
+    // Create a new ImageData instance
+    const newImageData = new ImageData(
+      new Uint8ClampedArray(imageData.buffer),
+      imageData.width,
+      imageData.height,
+    )
 
-      // Draw image to canvas
-      ctx.drawImage(img, 0, 0)
-
-      // Clean up object URL
-      URL.revokeObjectURL(img.src)
-    }
-  }, [imageFile])
+    // Draw the image data to the canvas
+    ctx.putImageData(newImageData, 0, 0)
+  }, [imageData, transformColor])
 
   return <canvas ref={canvasRef} />
 }

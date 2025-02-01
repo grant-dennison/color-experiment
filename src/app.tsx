@@ -1,7 +1,10 @@
 import { styled } from "goober"
-import { useState } from "preact/hooks"
-import ImageCanvas from './components/image-canvas'
-import ImageUploader from './components/image-uploader'
+import { useState, useCallback, useEffect } from "preact/hooks"
+import ImageCanvas from "./components/image-canvas"
+import ImageUploader from "./components/image-uploader"
+import { loadImageData } from "./utils/load-image-data"
+import { BufferedImageData } from "utils/image-data"
+import { imageWorker } from "worker"
 
 const AppContainer = styled("div")`
   max-width: 800px;
@@ -33,13 +36,49 @@ const StyledCanvas = styled("canvas")`
 `
 
 function App() {
-  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [worker] = useState(() => imageWorker.create())
+
+  const [imageData, setImageData] = useState<BufferedImageData | null>(null)
+  const [modifiedImages, setModifiedImages] = useState<
+    readonly BufferedImageData[] | null
+  >(null)
+
+  useEffect(() => {
+    if (!imageData) {
+      return
+    }
+    setModifiedImages(null)
+    worker.generateAlteredImages(imageData, {}).then(setModifiedImages, (e) => {
+      console.error(e)
+    })
+  }, [imageData])
 
   return (
     <AppContainer>
       <h1>Image Canvas Upload</h1>
-      <ImageUploader onImageUpload={setImageFile} />
-      {imageFile && <ImageCanvas imageFile={imageFile} />}
+      <ImageUploader onImageUpload={setImageData} />
+      {imageData && (
+        <div
+          style={{
+            display: "flex",
+            gap: "20px",
+            justifyContent: "center",
+            flexWrap: "wrap",
+          }}
+        >
+          <div>
+            <h3>Original Image</h3>
+            <ImageCanvas imageData={imageData} />
+          </div>
+          {modifiedImages &&
+            modifiedImages.map((mi) => (
+              <div>
+                <h3>Randomized Colors</h3>
+                <ImageCanvas imageData={mi} />
+              </div>
+            ))}
+        </div>
+      )}
     </AppContainer>
   )
 }

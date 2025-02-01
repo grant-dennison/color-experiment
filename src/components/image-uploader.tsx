@@ -1,5 +1,7 @@
 import { styled } from "goober"
 import { useRef, useState } from "preact/hooks"
+import { BufferedImageData } from "utils/image-data"
+import { loadImageData } from "utils/load-image-data"
 
 const UploadButton = styled("button")`
   background-color: #4caf50;
@@ -24,7 +26,7 @@ const ErrorMessage = styled("p")`
 `
 
 interface ImageUploaderProps {
-  onImageUpload: (file: File) => void
+  onImageUpload: (imageData: BufferedImageData) => void
 }
 
 const ImageUploader = ({ onImageUpload }: ImageUploaderProps) => {
@@ -36,7 +38,13 @@ const ImageUploader = ({ onImageUpload }: ImageUploaderProps) => {
     if (file) {
       if (file.type.startsWith("image/")) {
         setError("")
-        onImageUpload(file)
+        loadImageData(file).then(
+          (buffered) => onImageUpload(buffered),
+          (e) => {
+            console.error(e)
+            setError(e)
+          },
+        )
       } else {
         setError("Please upload an image file")
       }
@@ -59,5 +67,4 @@ const ImageUploader = ({ onImageUpload }: ImageUploaderProps) => {
     </div>
   )
 }
-
 export default ImageUploader
