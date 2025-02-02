@@ -1,10 +1,10 @@
 {
-  "name": "color-experiment",
-  "version": "0.1.0",
-  "description": "Test color variations on a pixel art image",
+  "name": "palette-roulette",
+  "version": "1.0.0",
+  "description": "Experiment with color variations on pixel art",
   "private": true,
   "scripts": {
-    "build": "esbuild src/index.tsx --bundle --outdir=public --sourcemap --minify",
+    "build": "esbuild src/index.tsx --bundle --outdir=public --minify",
     "check-types": "tsc --noEmit",
     "format": "prettier --no-semi . --write",
     "dev": "esbuild src/index.tsx --bundle --outdir=public --sourcemap --serve=3000 --servedir=public --watch",
