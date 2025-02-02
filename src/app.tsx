@@ -11,28 +11,6 @@ const AppContainer = styled("div")`
   padding: 10px;
 `
 
-const Button = styled("button")`
-  background-color: #4caf50;
-  border: none;
-  color: white;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 4px 2px;
-  cursor: pointer;
-  border-radius: 4px;
-
-  &:hover {
-    background-color: #45a049;
-  }
-`
-
-const StyledCanvas = styled("canvas")`
-  margin-top: 20px;
-`
-
 const Controls = styled("div")`
   margin: 20px 0;
   display: flex;
@@ -114,11 +92,17 @@ function App() {
 
   // Add state for generation parameters
   const [params, setParams] = useState<GenerationParams>({
-    howMany: 8,
+    howMany: 10,
     seed: 0,
     minHueShift: 0.0,
     maxHueShift: 0.8,
     howHueShift: "spread",
+    minSaturationShift: 0.0,
+    maxSaturationShift: 0.2,
+    howSaturationShift: "spread",
+    minLightnessShift: 0.0,
+    maxLightnessShift: 0.1,
+    howLightnessShift: "spread",
   })
 
   useEffect(() => {
@@ -198,7 +182,7 @@ function App() {
                       )
                     }
                   />
-                  <span>{params.minHueShift.toFixed(1)}</span>
+                  <span>{params.minHueShift * 100}%</span>
                 </InputGroup>
 
                 <InputGroup>
@@ -216,15 +200,124 @@ function App() {
                       )
                     }
                   />
-                  <span>{params.maxHueShift.toFixed(1)}</span>
+                  <span>{params.maxHueShift * 100}%</span>
                 </InputGroup>
 
                 <InputGroup>
                   <Label>Hue Shift Type:</Label>
                   <Select
                     value={params.howHueShift}
+                    onChange={(e: Event) =>
+                      handleParamChange(
+                        "howHueShift",
+                        (e.currentTarget as HTMLSelectElement).value,
+                      )
+                    }
+                  >
+                    <option value="minor">Minor</option>
+                    <option value="spread">Even Spread</option>
+                    <option value="extreme">Extreme</option>
+                  </Select>
+                </InputGroup>
+
+                <InputGroup>
+                  <Label>Min Saturation Shift:</Label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.1"
+                    value={params.minSaturationShift}
                     onChange={(e) =>
-                      handleParamChange("howHueShift", e.currentTarget.value)
+                      handleParamChange(
+                        "minSaturationShift",
+                        parseFloat(e.currentTarget.value),
+                      )
+                    }
+                  />
+                  <span>{params.minSaturationShift * 100}%</span>
+                </InputGroup>
+
+                <InputGroup>
+                  <Label>Max Saturation Shift:</Label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.1"
+                    value={params.maxSaturationShift}
+                    onChange={(e) =>
+                      handleParamChange(
+                        "maxSaturationShift",
+                        parseFloat(e.currentTarget.value),
+                      )
+                    }
+                  />
+                  <span>{params.maxSaturationShift * 100}%</span>
+                </InputGroup>
+
+                <InputGroup>
+                  <Label>Saturation Shift Type:</Label>
+                  <Select
+                    value={params.howSaturationShift}
+                    onChange={(e: Event) =>
+                      handleParamChange(
+                        "howSaturationShift",
+                        (e.currentTarget as HTMLSelectElement).value,
+                      )
+                    }
+                  >
+                    <option value="minor">Minor</option>
+                    <option value="spread">Even Spread</option>
+                    <option value="extreme">Extreme</option>
+                  </Select>
+                </InputGroup>
+
+                <InputGroup>
+                  <Label>Min Lightness Shift:</Label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.1"
+                    value={params.minLightnessShift}
+                    onChange={(e) =>
+                      handleParamChange(
+                        "minLightnessShift",
+                        parseFloat(e.currentTarget.value),
+                      )
+                    }
+                  />
+                  <span>{params.minLightnessShift * 100}%</span>
+                </InputGroup>
+
+                <InputGroup>
+                  <Label>Max Lightness Shift:</Label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.1"
+                    value={params.maxLightnessShift}
+                    onChange={(e) =>
+                      handleParamChange(
+                        "maxLightnessShift",
+                        parseFloat(e.currentTarget.value),
+                      )
+                    }
+                  />
+                  <span>{params.maxLightnessShift * 100}%</span>
+                </InputGroup>
+
+                <InputGroup>
+                  <Label>Lightness Shift Type:</Label>
+                  <Select
+                    value={params.howLightnessShift}
+                    onChange={(e: Event) =>
+                      handleParamChange(
+                        "howLightnessShift",
+                        (e.currentTarget as HTMLSelectElement).value,
+                      )
                     }
                   >
                     <option value="minor">Minor</option>

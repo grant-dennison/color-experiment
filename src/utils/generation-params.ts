@@ -6,4 +6,10 @@ export type GenerationParams = {
   minHueShift: number
   maxHueShift: number
   howHueShift: ShiftCurve
+  minSaturationShift: number
+  maxSaturationShift: number
+  howSaturationShift: ShiftCurve
+  minLightnessShift: number
+  maxLightnessShift: number
+  howLightnessShift: ShiftCurve
 }

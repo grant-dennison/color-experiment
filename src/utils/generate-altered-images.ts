@@ -1,14 +1,9 @@
 import Color from "color"
+import { makeCurveFunction } from "./curve"
 import { GenerationParams } from "./generation-params"
 import { BufferedImageData } from "./image-data"
 import { ColorKey, detectPalette, keyToRgb, rgbToKey } from "./palette"
-import {
-  makeRandomGenerator,
-  RandomGenerator,
-  randomRanged,
-  randomRangedInt,
-} from "./random"
-import { makeCurveFunction } from "./curve"
+import { makeRandomGenerator, RandomGenerator, randomRanged } from "./random"
 
 export async function generateAlteredImages(
   imageData: BufferedImageData,
@@ -36,6 +31,10 @@ function generateAlteredImage(
 ) {
   const hueCurve = makeCurveFunction(params.howHueShift)
   const hueRandom = () => hueCurve(random())
+  const saturationCurve = makeCurveFunction(params.howSaturationShift)
+  const saturationRandom = () => saturationCurve(random())
+  const lightnessCurve = makeCurveFunction(params.howLightnessShift)
+  const lightnessRandom = () => lightnessCurve(random())
   function transformColor(
     r: number,
     g: number,
@@ -43,6 +42,8 @@ function generateAlteredImage(
   ): [number, number, number] {
     let c = Color({ r, g, b })
     if (params.minHueShift === params.maxHueShift) {
+      // Eat random
+      hueRandom()
       c = c.rotate(params.minHueShift * 360)
     } else {
       c = c.rotate(
@@ -53,13 +54,37 @@ function generateAlteredImage(
         ),
       )
     }
+    const saturationSign = random() < 0.5 ? -1 : 1
+    if (params.minSaturationShift === params.maxSaturationShift) {
+      // Eat random
+      saturationRandom()
+      c = c.saturate(saturationSign * params.minSaturationShift)
+    } else {
+      c = c.saturate(
+        saturationSign *
+          randomRanged(
+            params.minSaturationShift,
+            params.maxSaturationShift,
+            saturationRandom,
+          ),
+      )
+    }
+    const lightenSign = random() < 0.5 ? -1 : 1
+    if (params.minLightnessShift === params.maxLightnessShift) {
+      // Eat random
+      lightnessRandom()
+      c = c.lighten(lightenSign * params.minLightnessShift)
+    } else {
+      c = c.lighten(
+        lightenSign *
+          randomRanged(
+            params.minLightnessShift,
+            params.maxLightnessShift,
+            lightnessRandom,
+          ),
+      )
+    }
     return [c.red(), c.green(), c.blue()]
-    // return [255, 0, 255]
-    // return [
-    //   Math.floor(Math.random() * 256),
-    //   Math.floor(Math.random() * 256),
-    //   Math.floor(Math.random() * 256),
-    // ]
   }
 
   const mappedPalette = new Map<ColorKey, ColorKey>()
@@ -72,7 +97,6 @@ function generateAlteredImage(
   const data = new Uint8ClampedArray(imageData.buffer)
 
   for (let i = 0; i < data.length; i += 4) {
-    // const [r, g, b] = transformColor(data[i], data[i + 1], data[i + 2]);
     const [r0, g0, b0] = [data[i], data[i + 1], data[i + 2]]
     const [r, g, b] = keyToRgb(mappedPalette.get(rgbToKey(r0, g0, b0))!)
     data[i] = r
