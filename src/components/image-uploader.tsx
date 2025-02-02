@@ -25,6 +25,11 @@ const ErrorMessage = styled("p")`
   color: red;
 `
 
+const UploaderContainer = styled("div")`
+  display: flex;
+  justify-content: center;
+`
+
 interface ImageUploaderProps {
   onImageUpload: (imageData: BufferedImageData) => void
 }
@@ -52,7 +57,7 @@ const ImageUploader = ({ onImageUpload }: ImageUploaderProps) => {
   }
 
   return (
-    <div>
+    <UploaderContainer>
       <input
         type="file"
         accept="image/*"
@@ -64,7 +69,7 @@ const ImageUploader = ({ onImageUpload }: ImageUploaderProps) => {
         Load Image
       </UploadButton>
       {error && <ErrorMessage>{error}</ErrorMessage>}
-    </div>
+    </UploaderContainer>
   )
 }
 export default ImageUploader
