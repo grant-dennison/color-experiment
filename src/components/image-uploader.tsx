@@ -61,7 +61,7 @@ const ImageUploader = ({ onImageUpload }: ImageUploaderProps) => {
         style={{ display: "none" }}
       />
       <UploadButton onClick={() => fileInputRef.current?.click()}>
-        Upload Image
+        Load Image
       </UploadButton>
       {error && <ErrorMessage>{error}</ErrorMessage>}
     </div>

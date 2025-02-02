@@ -70,7 +70,7 @@ function App() {
 
   // Add state for generation parameters
   const [params, setParams] = useState<GenerationParams>({
-    howMany: 3,
+    howMany: 8,
     seed: 0,
     minHueShift: 0.0,
     maxHueShift: 0.8,
@@ -101,111 +101,123 @@ function App() {
 
   return (
     <AppContainer>
-      <h1>Image Canvas Upload</h1>
-      <ImageUploader onImageUpload={setImageData} />
+      <div id="controls">
+        <ImageUploader onImageUpload={setImageData} />
 
-      {imageData && (
-        <>
-          <Controls>
-            <InputGroup>
-              <Label>Number of Images:</Label>
-              <input
-                type="number"
-                min="1"
-                max="10"
-                value={params.howMany}
-                onChange={(e) =>
-                  handleParamChange(
-                    "howMany",
-                    parseInt(e.currentTarget.value, 10),
-                  )
-                }
-              />
-            </InputGroup>
+        {imageData && (
+          <>
+            <Controls>
+              <InputGroup>
+                <Label>Number of Images:</Label>
+                <input
+                  type="number"
+                  min="1"
+                  max="128"
+                  step="4"
+                  value={params.howMany}
+                  onChange={(e) =>
+                    handleParamChange(
+                      "howMany",
+                      parseInt(e.currentTarget.value, 10),
+                    )
+                  }
+                />
+              </InputGroup>
 
-            <InputGroup>
-              <Label>Seed:</Label>
-              <input
-                type="number"
-                value={params.seed}
-                onChange={(e) =>
-                  handleParamChange("seed", parseInt(e.currentTarget.value, 10))
-                }
-              />
-            </InputGroup>
+              <InputGroup>
+                <Label>Seed:</Label>
+                <input
+                  type="number"
+                  value={params.seed}
+                  onChange={(e) =>
+                    handleParamChange(
+                      "seed",
+                      parseInt(e.currentTarget.value, 10),
+                    )
+                  }
+                />
+              </InputGroup>
 
-            <InputGroup>
-              <Label>Min Hue Shift:</Label>
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.1"
-                value={params.minHueShift}
-                onChange={(e) =>
-                  handleParamChange(
-                    "minHueShift",
-                    parseFloat(e.currentTarget.value),
-                  )
-                }
-              />
-              <span>{params.minHueShift.toFixed(1)}</span>
-            </InputGroup>
+              <InputGroup>
+                <Label>Min Hue Shift:</Label>
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.1"
+                  value={params.minHueShift}
+                  onChange={(e) =>
+                    handleParamChange(
+                      "minHueShift",
+                      parseFloat(e.currentTarget.value),
+                    )
+                  }
+                />
+                <span>{params.minHueShift.toFixed(1)}</span>
+              </InputGroup>
 
-            <InputGroup>
-              <Label>Max Hue Shift:</Label>
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.1"
-                value={params.maxHueShift}
-                onChange={(e) =>
-                  handleParamChange(
-                    "maxHueShift",
-                    parseFloat(e.currentTarget.value),
-                  )
-                }
-              />
-              <span>{params.maxHueShift.toFixed(1)}</span>
-            </InputGroup>
+              <InputGroup>
+                <Label>Max Hue Shift:</Label>
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.1"
+                  value={params.maxHueShift}
+                  onChange={(e) =>
+                    handleParamChange(
+                      "maxHueShift",
+                      parseFloat(e.currentTarget.value),
+                    )
+                  }
+                />
+                <span>{params.maxHueShift.toFixed(1)}</span>
+              </InputGroup>
 
-            <InputGroup>
-              <Label>Hue Shift Type:</Label>
-              <Select
-                value={params.howHueShift}
-                onChange={(e) =>
-                  handleParamChange("howHueShift", e.currentTarget.value)
-                }
-              >
-                <option value="minor">Minor</option>
-                <option value="spread">Even Spread</option>
-                <option value="extreme">Extreme</option>
-              </Select>
-            </InputGroup>
-          </Controls>
+              <InputGroup>
+                <Label>Hue Shift Type:</Label>
+                <Select
+                  value={params.howHueShift}
+                  onChange={(e) =>
+                    handleParamChange("howHueShift", e.currentTarget.value)
+                  }
+                >
+                  <option value="minor">Minor</option>
+                  <option value="spread">Even Spread</option>
+                  <option value="extreme">Extreme</option>
+                </Select>
+              </InputGroup>
+            </Controls>
 
-          <div
-            style={{
-              display: "flex",
-              gap: "20px",
-              justifyContent: "center",
-              flexWrap: "wrap",
-            }}
-          >
             <div>
               <h3>Original Image</h3>
               <ImageCanvas imageData={imageData} />
             </div>
+          </>
+        )}
+      </div>
+      {modifiedImages && modifiedImages.length > 0 && (
+        <div id="variations">
+          <h3>Variations</h3>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+              gap: "2rem",
+              padding: "1rem",
+            }}
+          >
             {modifiedImages &&
               modifiedImages.map((mi, index) => (
-                <div key={index}>
-                  <h3>Randomized Colors</h3>
-                  <ImageCanvas imageData={mi} />
+                <div key={index} style={{ width: "100%", minWidth: 0 }}>
+                  <ImageCanvas
+                    imageData={mi}
+                    style={{ width: "100%", height: "auto" }}
+                  />
                 </div>
               ))}
           </div>
-        </>
+        </div>
       )}
     </AppContainer>
   )

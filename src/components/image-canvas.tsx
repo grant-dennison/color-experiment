@@ -1,5 +1,6 @@
 import { styled } from "goober"
 import { useEffect, useRef } from "preact/hooks"
+import { JSXInternal } from "preact/src/jsx"
 import { BufferedImageData } from "utils/image-data"
 
 const Canvas = styled("canvas")`
@@ -11,9 +12,14 @@ const Canvas = styled("canvas")`
 interface ImageCanvasProps {
   imageData: BufferedImageData
   transformColor?: (r: number, g: number, b: number) => [number, number, number]
+  style?: JSXInternal.CSSProperties
 }
 
-const ImageCanvas = ({ imageData, transformColor }: ImageCanvasProps) => {
+const ImageCanvas = ({
+  imageData,
+  style,
+  transformColor,
+}: ImageCanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
@@ -38,7 +44,7 @@ const ImageCanvas = ({ imageData, transformColor }: ImageCanvasProps) => {
     ctx.putImageData(newImageData, 0, 0)
   }, [imageData, transformColor])
 
-  return <canvas ref={canvasRef} />
+  return <canvas style={style} ref={canvasRef} />
 }
 
 export default ImageCanvas
