@@ -1,6 +1,6 @@
 {
   "name": "palette-roulette",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Experiment with color variations on pixel art",
   "private": true,
   "scripts": {

@@ -41,17 +41,19 @@ function generateAlteredImage(
     b: number,
   ): [number, number, number] {
     let c = Color({ r, g, b })
+    const hueSign = random() < 0.5 ? -1 : 1
     if (params.minHueShift === params.maxHueShift) {
       // Eat random
       hueRandom()
-      c = c.rotate(params.minHueShift * 360)
+      c = c.rotate(hueSign * params.minHueShift * 180)
     } else {
       c = c.rotate(
-        randomRanged(
-          params.minHueShift * 360,
-          params.maxHueShift * 360,
-          hueRandom,
-        ),
+        hueSign *
+          randomRanged(
+            params.minHueShift * 180,
+            params.maxHueShift * 180,
+            hueRandom,
+          ),
       )
     }
     const saturationSign = random() < 0.5 ? -1 : 1
